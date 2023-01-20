@@ -49,6 +49,7 @@ resource "google_compute_router_nat" "main" {
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 }
 
+# We do not want a default route to the Internet (this is a restricted network)
 # resource "google_compute_route" "internet" {
 #   project          = var.gcp_project_id
 #   name             = "${google_compute_network.vpc.name}-public-internet"
@@ -58,26 +59,6 @@ resource "google_compute_router_nat" "main" {
 #   next_hop_gateway = "default-internet-gateway"
 #   priority         = 1000
 # }
-
-# resource "google_compute_route" "iap" {
-#   project          = var.gcp_project_id
-#   name             = "${google_compute_network.vpc.name}-iap"
-#   description      = "Route to the internet"
-#   dest_range       = "0.0.0.0/0"
-#   network          = google_compute_network.vpc.name
-#   next_hop_gateway = "default-internet-gateway"
-#   priority         = 1000
-# }
-
-resource "google_compute_route" "google_private_access" {
-  name             = "${google_compute_network.vpc.name}-google-private-access"
-  project          = var.gcp_project_id
-  description      = "Route for Google Private Access"
-  dest_range       = "199.36.153.8/30"
-  network          = google_compute_network.vpc.name
-  next_hop_gateway = "default-internet-gateway"
-  priority         = 1000
-}
 
 # creates a router per endpoint passed into var.public_services
 # this restricts traffic to only these destinations
