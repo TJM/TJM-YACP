@@ -30,8 +30,10 @@ resource "google_compute_route" "f5" {
 
 module "f5_ce" {
   # source                         = "github.com/cklewar/f5-xc-modules//f5xc/ce/gcp?ref=b73dbac"
-  source                         = "github.com/tjm/f5-xc-modules//f5xc/ce/gcp?ref=a110409"
+  source = "github.com/tjm/f5-xc-modules//f5xc/ce/gcp?ref=7d2bb4d" # fix/no-public-ips
+  # source                         = "../../F5/f5-xc-modules/f5xc/ce/gcp"
   f5xc_ce_gateway_multi_node     = false # this is broken when true
+  use_public_ip                  = false
   gcp_region                     = var.gcp_region
   fabric_subnet_outside          = "" # empty string - do not create
   fabric_subnet_inside           = "" # empty string - do not create
