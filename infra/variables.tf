@@ -116,11 +116,11 @@ variable "cluster_longitude" {
 
 
 variable "machine_image" {
-  type    = string
-  default = "vesio-dev-cz/centos7-atomic-202007210749-multi"
-  # default = "vesio-dev-cz/centos7-atomic-20220721105-single-voltmesh-us"
-  # default = "vesio-dev-cz/centos7-atomic-20220721105-single-voltmesh"
-  # default = "centos7-atomic-20220721105-single-voltmesh-us"
+  type = string
+  # default = "vesio-dev-cz/centos7-atomic-202007210749-multi" # Does not work - never registers, no sshd
+  # default = "vesio-dev-cz/centos7-atomic-20220721105-single-voltmesh-us" # Doesn't work - Unable to verify image (permissions)
+  # default = "vesio-dev-cz/centos7-atomic-20220721105-single-voltmesh" # Doesn't work - Unable to verify image (permissions)
+  # default = "centos7-atomic-20220721105-single-voltmesh-us" # LOCAL IMAGE
 }
 
 variable "machine_type" {
