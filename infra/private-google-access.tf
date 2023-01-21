@@ -1,4 +1,5 @@
 # Google Private DNS
+# - https://cloud.google.com/vpc/docs/configure-private-google-access
 
 ## Route
 resource "google_compute_route" "google_private_access" {
