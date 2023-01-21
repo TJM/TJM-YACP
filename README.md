@@ -12,6 +12,7 @@ This is a test of a "secure" network (extremely limited Internet access).
 
 * Existing Google Project, with all the necessary APIs enabled
 * Terraform 1.x :-/
+* API Token and API Certificate from F5 site (Administration -> Personal Management -> Credentials)
 * The current revision (see `variables.tf`) is using a local `machine_image`, so you will have to add it:
   * `gcloud compute images create centos7-atomic-20220721105-single-voltmesh --source-uri gs://ves-images/centos7-atomic-20220721105-single-voltmesh.tar.gz`
 

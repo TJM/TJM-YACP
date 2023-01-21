@@ -29,8 +29,8 @@ resource "google_compute_route" "f5" {
 }
 
 module "f5_ce" {
-  # source                         = "github.com/cklewar/f5-xc-modules//f5xc/ce/gcp?ref=b73dbac"
-  source = "github.com/tjm/f5-xc-modules//f5xc/ce/gcp?ref=7d2bb4d" # fix/no-public-ips
+  source = "github.com/cklewar/f5-xc-modules//f5xc/ce/gcp?ref=0aaa5ca"
+  # source = "github.com/tjm/f5-xc-modules//f5xc/ce/gcp?ref=7d2bb4d" # fix/no-public-ips
   # source                         = "../../F5/f5-xc-modules/f5xc/ce/gcp"
   f5xc_ce_gateway_multi_node     = false # this is broken when true
   use_public_ip                  = false

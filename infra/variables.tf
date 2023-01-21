@@ -116,11 +116,11 @@ variable "cluster_longitude" {
 
 
 variable "machine_image" {
-  type = string
-  # default = "vesio-dev-cz/centos7-atomic-202007210749-multi"
+  type    = string
+  default = "vesio-dev-cz/centos7-atomic-202007210749-multi"
   # default = "vesio-dev-cz/centos7-atomic-20220721105-single-voltmesh-us"
   # default = "vesio-dev-cz/centos7-atomic-20220721105-single-voltmesh"
-  default = "centos7-atomic-20220721105-single-voltmesh-us"
+  # default = "centos7-atomic-20220721105-single-voltmesh-us"
 }
 
 variable "machine_type" {

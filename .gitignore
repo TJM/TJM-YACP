@@ -1,4 +1,6 @@
 .terraform
+.terraform.lock.info
+.terraform.tfstate.lock.info
 terraform.tfstate*
 terraform.tfvars
 *.p12
