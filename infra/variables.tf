@@ -79,6 +79,10 @@ variable "f5_ip_ranges" {
     "185.94.142.0/25",
     "185.94.143.0/25",
     "159.60.190.0/24",
+    "20.150.36.4/32",   # vesio.blob.core.windows.net
+    "18.117.40.234/32", # register.ves.volterra.io
+    "13.107.237.66/24", # downloads.volterra.io
+    "13.107.238.66/24", # downloads.volterra.io
   ]
 }
 
