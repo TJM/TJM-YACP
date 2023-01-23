@@ -11,6 +11,6 @@ resource "google_compute_instance" "test_vm" {
   }
   network_interface {
     network    = google_compute_network.vpc.self_link
-    subnetwork = google_compute_subnetwork.subnet.id
+    subnetwork = google_compute_subnetwork.main.id
   }
 }

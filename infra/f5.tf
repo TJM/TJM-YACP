@@ -30,6 +30,20 @@ resource "google_compute_route" "f5" {
   priority         = 900
 }
 
+# EGRESS Firewall allow for f5_ip_ranges
+resource "google_compute_firewall" "f5_ip_ranges" {
+  name               = "${google_compute_network.vpc.name}-f5"
+  project            = var.gcp_project_id
+  network            = google_compute_network.vpc.name
+  direction          = "EGRESS"
+  priority           = 1000
+  destination_ranges = var.f5_ip_ranges
+  allow {
+    protocol = "tcp"
+    ports    = ["443"]
+  }
+}
+
 module "f5_ce" {
   source = "github.com/cklewar/f5-xc-modules//f5xc/ce/gcp?ref=0aaa5ca"
   # source = "github.com/tjm/f5-xc-modules//f5xc/ce/gcp?ref=7d2bb4d" # fix/no-public-ips
@@ -39,7 +53,7 @@ module "f5_ce" {
   gcp_region                     = var.gcp_region
   fabric_subnet_outside          = "" # empty string - do not create
   fabric_subnet_inside           = "" # empty string - do not create
-  existing_fabric_subnet_outside = google_compute_subnetwork.subnet.self_link
+  existing_fabric_subnet_outside = google_compute_subnetwork.main.self_link
   network_name                   = "" # unused
   instance_name                  = "${var.name_prefix}-${var.env}-f5xc-${random_id.suffix.hex}"
   ssh_username                   = "centos"

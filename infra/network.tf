@@ -8,7 +8,7 @@ resource "google_compute_network" "vpc" {
 }
 
 ## Subnet(s)
-resource "google_compute_subnetwork" "subnet" {
+resource "google_compute_subnetwork" "main" {
   name                     = "${google_compute_network.vpc.name}-${var.gcp_region}"
   ip_cidr_range            = var.subnet
   region                   = var.gcp_region
@@ -71,4 +71,37 @@ resource "google_compute_route" "public_services" {
   network          = google_compute_network.vpc.name
   next_hop_gateway = "default-internet-gateway"
   priority         = 900
+}
+
+# EGRESS Firewall for Public Services
+resource "google_compute_firewall" "public_services" {
+  name               = "${google_compute_network.vpc.name}-public-svc"
+  project            = var.gcp_project_id
+  network            = google_compute_network.vpc.name
+  direction          = "EGRESS"
+  priority           = 1000
+  destination_ranges = [for svc, ip in var.public_services : "${ip}/32"]
+  allow {
+    protocol = "tcp"
+    ports    = ["443"]
+  }
+}
+
+
+## Create a firewall blocking (and logging) outbound access
+## NOTE: By default egress is allowed in GCP
+resource "google_compute_firewall" "default_egress" {
+  name      = "${google_compute_network.vpc.name}-default-egress-deny"
+  project   = var.gcp_project_id
+  network   = google_compute_network.vpc.name
+  direction = "EGRESS"
+  priority  = 65535
+
+  deny {
+    protocol = "all"
+  }
+
+  log_config {
+    metadata = "INCLUDE_ALL_METADATA"
+  }
 }
