@@ -81,6 +81,7 @@ variable "f5_ip_ranges" {
     "159.60.190.0/24",
     "72.19.3.0/24",     # volterra-03
     "20.150.36.4/32",   # vesio.blob.core.windows.net
+    "20.60.62.4/32",    # waferdatasetsprod.blob.core.windows.net
     "18.117.40.234/32", # register.ves.volterra.io
     "13.107.237.0/24",  # downloads.volterra.io
     "13.107.238.0/24",  # downloads.volterra.io
@@ -129,6 +130,7 @@ variable "cluster_longitude" {
 }
 
 
+# https://docs.cloud.f5.com/docs/images/node-cloud-images
 variable "machine_image" {
   type = string
   # default = "vesio-dev-cz/centos7-atomic-202007210749-multi" # Does not work - never registers, no sshd
