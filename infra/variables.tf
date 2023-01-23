@@ -37,6 +37,15 @@ variable "env" {
   default     = "f5lab"
 }
 
+variable "google_private_access_domains" {
+  type        = list(string)
+  description = "List of Google Private Access domans to setup DNS for"
+  default = [
+    "googleapis.com",
+    "gcr.io",
+    "pkg.dev"
+  ]
+}
 
 ## Test VM
 variable "gcp_compute_image" {

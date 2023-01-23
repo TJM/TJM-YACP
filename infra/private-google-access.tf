@@ -12,29 +12,28 @@ resource "google_compute_route" "google_private_access" {
   priority         = 1000
 }
 
-## DNS
-# Create private zone for private.googleapis.com
-resource "google_dns_managed_zone" "googleapis_zone" {
-  project     = var.gcp_project_id
-  name        = "${google_compute_network.vpc.name}-googleapis-com-private"
-  dns_name    = "googleapis.com."
-  description = "Google APIs Private Access Zone"
-  visibility  = "private"
-
-  private_visibility_config {
-    networks {
-      network_url = google_compute_network.vpc.self_link
-    }
+## EGRESS Firewall
+resource "google_compute_firewall" "private_google_access" {
+  name               = "${google_compute_network.vpc.name}-private-google-access"
+  project            = var.gcp_project_id
+  network            = google_compute_network.vpc.name
+  direction          = "EGRESS"
+  priority           = 1000
+  destination_ranges = ["199.36.153.8/30"]
+  allow {
+    protocol = "tcp"
+    ports    = ["443"]
   }
-
-  # depends_on = [google_project_service.apis]
 }
 
-resource "google_dns_managed_zone" "gcr_zone" {
+## DNS
+# Create private zone for private.googleapis.com domains
+resource "google_dns_managed_zone" "google_private_access" {
+  for_each    = toset(var.google_private_access_domains)
   project     = var.gcp_project_id
-  name        = "${google_compute_network.vpc.name}-gcr-io-private"
-  dns_name    = "gcr.io."
-  description = "Google Container Registry Private Access Zone"
+  name        = "${google_compute_network.vpc.name}-${replace(each.value, ".", "-")}-private"
+  dns_name    = "${each.value}."
+  description = "Google Private Access ${each.value}"
   visibility  = "private"
 
   private_visibility_config {
@@ -47,25 +46,11 @@ resource "google_dns_managed_zone" "gcr_zone" {
 }
 
 # Create private googleapis.com A record
-resource "google_dns_record_set" "a" {
+resource "google_dns_record_set" "google_private_access_a" {
+  for_each     = google_dns_managed_zone.google_private_access
   project      = var.gcp_project_id
-  name         = "private.${google_dns_managed_zone.googleapis_zone.dns_name}"
-  managed_zone = google_dns_managed_zone.googleapis_zone.name
-  type         = "A"
-  ttl          = 86400
-
-  rrdatas = [
-    "199.36.153.8",
-    "199.36.153.9",
-    "199.36.153.10",
-    "199.36.153.11",
-  ]
-}
-
-resource "google_dns_record_set" "gcr_a_record" {
-  project      = var.gcp_project_id
-  name         = google_dns_managed_zone.gcr_zone.dns_name
-  managed_zone = google_dns_managed_zone.gcr_zone.name
+  name         = each.value.dns_name
+  managed_zone = each.value.name
   type         = "A"
   ttl          = 86400
 
@@ -78,20 +63,12 @@ resource "google_dns_record_set" "gcr_a_record" {
 }
 
 # Create private googleapis.com CNAME record
-resource "google_dns_record_set" "cname" {
+resource "google_dns_record_set" "google_private_access_cname" {
+  for_each     = google_dns_managed_zone.google_private_access
   project      = var.gcp_project_id
-  name         = "*.${google_dns_managed_zone.googleapis_zone.dns_name}"
-  managed_zone = google_dns_managed_zone.googleapis_zone.name
+  name         = "*.${each.value.dns_name}"
+  managed_zone = each.value.name
   type         = "CNAME"
   ttl          = 86400
-  rrdatas      = ["${google_dns_record_set.a.name}"]
-}
-
-resource "google_dns_record_set" "gcr_cname" {
-  project      = var.gcp_project_id
-  name         = "*.${google_dns_managed_zone.gcr_zone.dns_name}"
-  managed_zone = google_dns_managed_zone.gcr_zone.name
-  type         = "CNAME"
-  ttl          = 86400
-  rrdatas      = ["${google_dns_record_set.gcr_a_record.name}"]
+  rrdatas      = ["${each.value.dns_name}"]
 }
