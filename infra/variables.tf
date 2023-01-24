@@ -70,7 +70,8 @@ variable "public_services" {
 }
 
 variable "f5_ip_ranges" {
-  type = list(string)
+  type        = list(string)
+  description = "List of IP ranges to allow in/out for F5 CE IPSEC and SSL VPN"
   default = [ # Americas range from https://docs.cloud.f5.com/docs/reference/network-cloud-ref
     "5.182.215.0/25",
     "84.54.61.0/25",
@@ -79,6 +80,13 @@ variable "f5_ip_ranges" {
     "185.94.142.0/25",
     "185.94.143.0/25",
     "159.60.190.0/24",
+  ]
+}
+
+variable "f5_additional_ips" {
+  type        = list(string)
+  description = "List of additional outbound IP ranges for F5 CE"
+  default = [
     "72.19.3.0/24",     # volterra-03
     "20.150.36.4/32",   # vesio.blob.core.windows.net
     "20.60.62.4/32",    # waferdatasetsprod.blob.core.windows.net

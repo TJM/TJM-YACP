@@ -4,3 +4,8 @@ output "nat_ips" {
     for ip in google_compute_address.nat : ip.address
   ]
 }
+
+output "test_vm" {
+  description = "Test VM Name"
+  value       = google_compute_instance.test_vm.name
+}

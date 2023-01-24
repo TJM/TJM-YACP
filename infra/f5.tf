@@ -13,18 +13,18 @@ provider "google" {
 
 locals {
   cluster_labels = var.f5xc_fleet_label != "" ? { "ves.io/fleet" = var.f5xc_fleet_label } : {}
+  f5_routes      = concat(var.f5_ip_ranges, var.f5_additional_ips)
 }
 
 
 # creates a route per network passed into var.f5_ip_ranges
 # Needed to use count instead of for_each to get a nice name iterator
 resource "google_compute_route" "f5" {
-  # for_each         = toset(var.f5_ip_ranges)
-  count            = length(var.f5_ip_ranges)
+  count            = length(local.f5_routes)
   name             = "${google_compute_network.vpc.name}-f5-${count.index}"
   project          = var.gcp_project_id
   description      = "F5 Network Route ${count.index}"
-  dest_range       = var.f5_ip_ranges[count.index]
+  dest_range       = local.f5_routes[count.index]
   network          = google_compute_network.vpc.name
   next_hop_gateway = "default-internet-gateway"
   priority         = 900
@@ -67,6 +67,21 @@ resource "google_compute_firewall" "f5_ip_ranges_ingress" {
   allow {
     protocol = "udp"
     ports    = ["4500"]
+  }
+}
+
+resource "google_compute_firewall" "f5_additional_ips" {
+  name               = "${google_compute_network.vpc.name}-f5-addl-egress"
+  project            = var.gcp_project_id
+  network            = google_compute_network.vpc.name
+  direction          = "EGRESS"
+  priority           = 1000
+  destination_ranges = var.f5_additional_ips
+  target_tags        = ["f5xc"]
+
+  allow {
+    protocol = "tcp"
+    ports    = ["80", "443"]
   }
 }
 
