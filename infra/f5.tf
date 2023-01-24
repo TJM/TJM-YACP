@@ -31,19 +31,44 @@ resource "google_compute_route" "f5" {
 }
 
 # EGRESS Firewall allow for f5_ip_ranges
-resource "google_compute_firewall" "f5_ip_ranges" {
-  name               = "${google_compute_network.vpc.name}-f5"
+resource "google_compute_firewall" "f5_ip_ranges_egress" {
+  name               = "${google_compute_network.vpc.name}-f5-egress"
   project            = var.gcp_project_id
   network            = google_compute_network.vpc.name
   direction          = "EGRESS"
   priority           = 1000
   destination_ranges = var.f5_ip_ranges
+  target_tags        = ["f5xc"]
+
   allow {
     protocol = "tcp"
     ports    = ["443"]
   }
+
+  allow {
+    protocol = "udp"
+    ports    = ["4500"]
+  }
 }
 
+resource "google_compute_firewall" "f5_ip_ranges_ingress" {
+  name          = "${google_compute_network.vpc.name}-f5-ingress"
+  project       = var.gcp_project_id
+  network       = google_compute_network.vpc.name
+  direction     = "INGRESS"
+  priority      = 1000
+  source_ranges = var.f5_ip_ranges
+  target_tags   = ["f5xc"]
+  allow {
+    protocol = "tcp"
+    ports    = ["443"]
+  }
+
+  allow {
+    protocol = "udp"
+    ports    = ["4500"]
+  }
+}
 
 resource "google_compute_image" "f5xc" {
   name    = var.machine_image
@@ -81,6 +106,7 @@ module "f5_ce" {
   f5xc_cluster_latitude          = var.cluster_latitude
   f5xc_cluster_longitude         = var.cluster_longitude
   f5xc_ce_gateway_type           = "ingress_gateway"
+  instance_tags                  = ["f5xc"]
 
   providers = {
     google   = google.project_bound
