@@ -85,6 +85,12 @@ resource "google_compute_firewall" "f5_additional_ips" {
   }
 }
 
+resource "google_service_account" "f5xc" {
+  account_id   = "${google_compute_network.vpc.name}-f5xc"
+  project      = var.gcp_project_id
+  display_name = "F5XC CE Node SA"
+}
+
 resource "google_compute_image" "f5xc" {
   name    = var.machine_image
   project = var.gcp_project_id
@@ -101,6 +107,7 @@ module "f5_ce" {
   f5xc_ce_gateway_multi_node     = false # this is broken when true
   use_public_ip                  = false
   gcp_region                     = var.gcp_region
+  gcp_service_account_email      = google_service_account.f5xc.email
   fabric_subnet_outside          = "" # empty string - do not create
   fabric_subnet_inside           = "" # empty string - do not create
   existing_fabric_subnet_outside = google_compute_subnetwork.main.self_link
