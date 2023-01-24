@@ -136,7 +136,7 @@ variable "machine_image" {
   # default = "vesio-dev-cz/centos7-atomic-202007210749-multi" # Does not work - never registers, no sshd
   # default = "vesio-dev-cz/centos7-atomic-20220721105-single-voltmesh-us" # Doesn't work - Unable to verify image (permissions)
   # default = "vesio-dev-cz/centos7-atomic-20220721105-single-voltmesh" # Doesn't work - Unable to verify image (permissions)
-  default = "centos7-atomic-20220721105-single-voltmesh-us" # LOCAL IMAGE
+  default = "centos7-atomic-20220721105-single-voltmesh" # LOCAL IMAGE
 }
 
 variable "machine_type" {

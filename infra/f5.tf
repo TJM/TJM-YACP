@@ -44,6 +44,16 @@ resource "google_compute_firewall" "f5_ip_ranges" {
   }
 }
 
+
+resource "google_compute_image" "f5xc" {
+  name    = var.machine_image
+  project = var.gcp_project_id
+  family  = "f5xc-ce"
+  raw_disk {
+    source = "https://storage.googleapis.com/ves-images/${var.machine_image}.tar.gz"
+  }
+}
+
 module "f5_ce" {
   source = "github.com/cklewar/f5-xc-modules//f5xc/ce/gcp?ref=0aaa5ca"
   # source = "github.com/tjm/f5-xc-modules//f5xc/ce/gcp?ref=7d2bb4d" # fix/no-public-ips
@@ -58,7 +68,7 @@ module "f5_ce" {
   instance_name                  = "${var.name_prefix}-${var.env}-f5xc-${random_id.suffix.hex}"
   ssh_username                   = "centos"
   machine_type                   = var.machine_type
-  machine_image                  = var.machine_image
+  machine_image                  = google_compute_image.f5xc.name
   machine_disk_size              = var.machine_disk_size
   ssh_public_key                 = file(var.ssh_public_key_file)
   host_localhost_public_name     = "vip"
