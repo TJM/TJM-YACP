@@ -1,8 +1,11 @@
-output "nat_ips" {
-  description = "List of public IP addresses use for outbound NAT"
-  value = [
-    for ip in google_compute_address.nat : ip.address
-  ]
+output "main_nat_ips" {
+  description = "List of public IP addresses use for outbound NAT in MAIN"
+  value       = google_compute_address.nat.*.address
+}
+
+output "dmz_nat_ips" {
+  description = "List of public IP addresses use for outbound NAT in DMZ"
+  value       = google_compute_address.dmz_nat.*.address
 }
 
 output "test_vm" {

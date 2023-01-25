@@ -159,6 +159,7 @@ resource "google_compute_image" "f5xc_multi" {
   }
 }
 
+# Temporary Test VM
 resource "google_compute_instance" "multi_vm" {
   project                   = var.gcp_project_id
   zone                      = var.gcp_zone
@@ -170,13 +171,17 @@ resource "google_compute_instance" "multi_vm" {
       image = var.gcp_compute_image
     }
   }
-  network_interface {
-    network    = google_compute_network.vpc.self_link
-    subnetwork = google_compute_subnetwork.main.id
-  }
+
+  # First interface - DMZ (default route -> Internet)
   network_interface {
     network    = google_compute_network.dmz.self_link
     subnetwork = google_compute_subnetwork.dmz.id
+  }
+
+  # Secondary Interface - MAIN (inside)
+  network_interface {
+    network    = google_compute_network.vpc.self_link
+    subnetwork = google_compute_subnetwork.main.id
   }
 }
 
@@ -218,5 +223,10 @@ module "f5_ce_multi" {
   providers = {
     google   = google.project_bound
     volterra = volterra
+  }
+
+  timeouts {
+    create = "20m"
+    update = "10m"
   }
 }
