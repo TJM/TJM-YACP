@@ -164,7 +164,8 @@ variable "f5_additional_ips" {
 # ------------------------------
 
 variable "f5xc_tenant" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "f5xc_namespace" {
@@ -173,8 +174,8 @@ variable "f5xc_namespace" {
 }
 
 variable "f5xc_api_token" {
-  type    = string
-  default = "/YdvLxcS6zt+AjzcBXRzEVpdLAk="
+  type      = string
+  sensitive = true
 }
 
 variable "f5xc_api_p12_file" {
