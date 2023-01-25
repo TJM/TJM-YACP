@@ -21,8 +21,14 @@ variable "gcp_zone" {
 
 variable "subnet" {
   type        = string
-  description = "CIDR range of subnet"
+  description = "CIDR range of main subnet"
   default     = "10.4.0.0/16"
+}
+
+variable "dmz_subnet" {
+  type        = string
+  description = "CIDR range of DMZ subnet"
+  default     = "192.168.99.0/24"
 }
 
 variable "name_prefix" {
@@ -120,7 +126,7 @@ variable "gke_master_authorized_networks_config" {
       cidr_block   = "66.170.83.152/32"
     },
     { display_name = "Tommy McNeely - Ranch"
-      cidr_block   = "216.147.126.198/32"
+      cidr_block   = "216.147.126.199/32"
     },
   ]
 }
@@ -208,6 +214,12 @@ variable "machine_image" {
   # default = "vesio-dev-cz/centos7-atomic-20220721105-single-voltmesh-us" # Doesn't work - Unable to verify image (permissions)
   # default = "vesio-dev-cz/centos7-atomic-20220721105-single-voltmesh" # Doesn't work - Unable to verify image (permissions)
   default = "centos7-atomic-20220721105-single-voltmesh" # LOCAL IMAGE
+}
+
+variable "f5_machine_image_multi" {
+  type        = string
+  description = "F5XC CE Machine Image"
+  default     = "centos7-atomic-20220721105-multi-voltmesh"
 }
 
 variable "machine_type" {
