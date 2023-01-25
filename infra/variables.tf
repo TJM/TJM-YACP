@@ -47,6 +47,16 @@ variable "google_private_access_domains" {
   ]
 }
 
+# Map of public services (VIPs) to route, Example:
+# public_services = {
+#   "vault"       = "1.2.3.4"
+#   "artifactory" = "1.2.3.5"
+# }
+variable "public_services" {
+  type    = map(string)
+  default = {}
+}
+
 ## Test VM
 variable "gcp_compute_image" {
   type    = string
@@ -59,15 +69,67 @@ variable "gcp_compute_type" {
 }
 ## End TestVM
 
-# Map of public services (VIPs) to route, Example:
-# public_services = {
-#   "vault"       = "1.2.3.4"
-#   "artifactory" = "1.2.3.5"
-# }
-variable "public_services" {
-  type    = map(string)
-  default = {}
+## GKE
+
+variable "gke_master_cidr" {
+  type        = string
+  description = "GKE Master Nodes CIDR (must be /28)"
+  default     = "172.16.0.0/28"
 }
+
+variable "gke_node_cidr" {
+  type        = string
+  description = "GKE Worker Nodes SubNetwork CIDR (/24)"
+  default     = "10.0.4.0/24"
+}
+
+variable "gke_pod_cidr" {
+  type        = string
+  description = "GKE Pods SubNetwork CIDR (must be /24 for each node IP)"
+  default     = "100.64.0.0/16"
+}
+
+variable "gke_service_cidr" {
+  type        = string
+  description = "GKE Service SubNetwork CIDR (/24?)"
+  default     = "192.168.4.0/24"
+}
+
+### Master Authorized Networks List (cidr_blocks)
+### - https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#nested_master_authorized_networks_config
+variable "gke_master_authorized_networks_config" {
+  type = list(object({
+    display_name = string
+    cidr_block   = string
+  }))
+  default = [
+    {
+      display_name = "DEN3 New NAT egress IP"
+      cidr_block   = "66.170.91.254/32"
+    },
+    {
+      display_name = "DEN3 Legacy NAT egress IP"
+      cidr_block   = "216.46.186.66/32"
+    },
+    {
+      display_name = "SEA1 NAT egress IP"
+      cidr_block   = "66.170.83.151/32"
+    },
+    {
+      display_name = "SEA1 NAT egress IP"
+      cidr_block   = "66.170.83.152/32"
+    },
+    { display_name = "Tommy McNeely - Ranch"
+      cidr_block   = "216.147.126.198/32"
+    },
+  ]
+}
+
+
+
+## End GKE
+
+
 
 variable "f5_ip_ranges" {
   type        = list(string)
