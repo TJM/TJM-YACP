@@ -209,16 +209,14 @@ variable "cluster_longitude" {
 
 # https://docs.cloud.f5.com/docs/images/node-cloud-images
 variable "machine_image" {
-  type = string
-  # default = "vesio-dev-cz/centos7-atomic-202007210749-multi" # Does not work - never registers, no sshd
-  # default = "vesio-dev-cz/centos7-atomic-20220721105-single-voltmesh-us" # Doesn't work - Unable to verify image (permissions)
-  # default = "vesio-dev-cz/centos7-atomic-20220721105-single-voltmesh" # Doesn't work - Unable to verify image (permissions)
-  default = "centos7-atomic-20220721105-single-voltmesh" # LOCAL IMAGE
+  type        = string
+  description = "F5XC CE Single-NIC Machine Image"
+  default     = "centos7-atomic-20220721105-single-voltmesh"
 }
 
 variable "f5_machine_image_multi" {
   type        = string
-  description = "F5XC CE Machine Image"
+  description = "F5XC CE Multi-NIC Machine Image"
   default     = "centos7-atomic-20220721105-multi-voltmesh"
 }
 
