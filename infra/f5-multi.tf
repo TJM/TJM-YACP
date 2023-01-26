@@ -209,7 +209,7 @@ module "f5_ce_multi" {
   f5xc_api_url                   = var.f5xc_api_url
   f5xc_namespace                 = var.f5xc_namespace
   f5xc_api_token                 = var.f5xc_api_token
-  f5xc_token_name                = "${var.name_prefix}-${var.env}-${random_id.suffix.hex}"
+  f5xc_token_name                = "${var.name_prefix}-${var.env}-multi-${random_id.suffix.hex}"
   f5xc_fleet_label               = var.f5xc_fleet_label
   f5xc_cluster_latitude          = var.cluster_latitude
   f5xc_cluster_longitude         = var.cluster_longitude
@@ -223,10 +223,5 @@ module "f5_ce_multi" {
   providers = {
     google   = google.project_bound
     volterra = volterra
-  }
-
-  timeouts {
-    create = "20m"
-    update = "10m"
   }
 }
