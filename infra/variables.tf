@@ -66,7 +66,7 @@ variable "public_services" {
 ## Test VM
 variable "gcp_compute_image" {
   type    = string
-  default = "debian-cloud/debian-11"
+  default = "centos-cloud/centos-7-v20221206"
 }
 
 variable "gcp_compute_type" {
