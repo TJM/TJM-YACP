@@ -30,7 +30,7 @@ resource "random_id" "suffix" {
 resource "google_compute_project_metadata_item" "os_login" {
   project = var.gcp_project_id
   key     = "enable-oslogin"
-  value   = "TRUE"
+  value   = "FALSE"
 }
 
 resource "google_compute_project_metadata_item" "serial_port" {

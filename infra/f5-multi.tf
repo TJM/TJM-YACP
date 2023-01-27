@@ -161,7 +161,7 @@ resource "google_compute_instance" "multi_vm" {
   allow_stopping_for_update = true
   boot_disk {
     initialize_params {
-      image = "fedora-coreos-cloud/fedora-coreos-stable"
+      image = var.gcp_compute_image
     }
   }
 
