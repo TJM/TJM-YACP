@@ -12,3 +12,7 @@ output "test_vm" {
   description = "Test VM Name"
   value       = google_compute_instance.test_vm.name
 }
+
+# output "multi_ce" {
+#   value = module.f5_ce_multi
+# }

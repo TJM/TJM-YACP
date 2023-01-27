@@ -28,7 +28,7 @@ variable "subnet" {
 variable "dmz_subnet" {
   type        = string
   description = "CIDR range of DMZ subnet"
-  default     = "192.168.99.0/24"
+  default     = "192.168.0.0/20"
 }
 
 variable "name_prefix" {
@@ -218,6 +218,7 @@ variable "f5_machine_image_multi" {
   type        = string
   description = "F5XC CE Multi-NIC Machine Image"
   default     = "centos7-atomic-20220721105-multi-voltmesh"
+  # default = "centos7-atomic-20220721105-multi-voltmesh-us" # ERROR: no read access to this image
 }
 
 variable "machine_type" {

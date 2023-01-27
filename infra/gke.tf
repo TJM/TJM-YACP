@@ -44,65 +44,66 @@ resource "google_compute_firewall" "gke_egress_cp" {
 }
 
 ## Cluster
-resource "google_container_cluster" "primary" {
-  name       = "${google_compute_network.vpc.name}-01"
-  project    = var.gcp_project_id
-  location   = var.gcp_region
-  network    = google_compute_network.vpc.self_link
-  subnetwork = google_compute_subnetwork.gke.self_link
+# resource "google_container_cluster" "primary" {
+#   count      = 0
+#   name       = "${google_compute_network.vpc.name}-01"
+#   project    = var.gcp_project_id
+#   location   = var.gcp_region
+#   network    = google_compute_network.vpc.self_link
+#   subnetwork = google_compute_subnetwork.gke.self_link
 
 
-  # We can't create a cluster with no node pool defined, but we want to only use
-  # separately managed node pools. So we create the smallest possible default
-  # node pool and immediately delete it.
-  remove_default_node_pool = true
-  initial_node_count       = 1
+#   # We can't create a cluster with no node pool defined, but we want to only use
+#   # separately managed node pools. So we create the smallest possible default
+#   # node pool and immediately delete it.
+#   remove_default_node_pool = true
+#   initial_node_count       = 1
 
-  ip_allocation_policy {
-    cluster_secondary_range_name  = google_compute_subnetwork.gke.secondary_ip_range[0].range_name
-    services_secondary_range_name = google_compute_subnetwork.gke.secondary_ip_range[1].range_name
-  }
+#   ip_allocation_policy {
+#     cluster_secondary_range_name  = google_compute_subnetwork.gke.secondary_ip_range[0].range_name
+#     services_secondary_range_name = google_compute_subnetwork.gke.secondary_ip_range[1].range_name
+#   }
 
-  private_cluster_config {
-    enable_private_nodes    = true
-    enable_private_endpoint = false
-    master_ipv4_cidr_block  = var.gke_master_cidr
-  }
+#   private_cluster_config {
+#     enable_private_nodes    = true
+#     enable_private_endpoint = false
+#     master_ipv4_cidr_block  = var.gke_master_cidr
+#   }
 
-  node_config {
-    tags = ["gke"]
-    # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
-    service_account = google_service_account.gke.email
-    oauth_scopes = [
-      "https://www.googleapis.com/auth/cloud-platform"
-    ]
-  }
+#   node_config {
+#     tags = ["gke"]
+#     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
+#     service_account = google_service_account.gke.email
+#     oauth_scopes = [
+#       "https://www.googleapis.com/auth/cloud-platform"
+#     ]
+#   }
 
-  depends_on = [
-    google_compute_firewall.gke_egress_cp
-  ]
-}
+#   depends_on = [
+#     google_compute_firewall.gke_egress_cp
+#   ]
+# }
 
-resource "google_container_node_pool" "pool1" {
-  name               = "${google_compute_network.vpc.name}-pool-1"
-  project            = var.gcp_project_id
-  location           = var.gcp_region
-  cluster            = google_container_cluster.primary.name
-  initial_node_count = 1
+# resource "google_container_node_pool" "pool1" {
+#   name               = "${google_compute_network.vpc.name}-pool-1"
+#   project            = var.gcp_project_id
+#   location           = var.gcp_region
+#   cluster            = google_container_cluster.primary.name
+#   initial_node_count = 1
 
-  autoscaling {
-    min_node_count = 1
-    max_node_count = 3
-  }
+#   autoscaling {
+#     min_node_count = 1
+#     max_node_count = 3
+#   }
 
-  node_config {
-    machine_type = "e2-standard-4"
-    tags         = ["gke"]
+#   node_config {
+#     machine_type = "e2-standard-4"
+#     tags         = ["gke"]
 
-    # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
-    service_account = google_service_account.gke.email
-    oauth_scopes = [
-      "https://www.googleapis.com/auth/cloud-platform"
-    ]
-  }
-}
+#     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
+#     service_account = google_service_account.gke.email
+#     oauth_scopes = [
+#       "https://www.googleapis.com/auth/cloud-platform"
+#     ]
+#   }
+# }

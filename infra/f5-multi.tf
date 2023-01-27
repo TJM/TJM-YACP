@@ -142,13 +142,6 @@ resource "google_compute_firewall" "f5_ip_ranges_ingress_dmz" {
   }
 }
 
-## DUPLICATED in f5-slo
-
-# resource "google_service_account" "f5xc" {
-#   account_id   = "${google_compute_network.dmz.name}-f5xc"
-#   project      = var.gcp_project_id
-#   display_name = "F5XC CE Node SA"
-# }
 
 resource "google_compute_image" "f5xc_multi" {
   name    = var.f5_machine_image_multi
@@ -168,7 +161,7 @@ resource "google_compute_instance" "multi_vm" {
   allow_stopping_for_update = true
   boot_disk {
     initialize_params {
-      image = var.gcp_compute_image
+      image = "fedora-coreos-cloud/fedora-coreos-stable"
     }
   }
 
@@ -186,11 +179,13 @@ resource "google_compute_instance" "multi_vm" {
 }
 
 module "f5_ce_multi" {
-  source = "github.com/cklewar/f5-xc-modules//f5xc/ce/gcp?ref=0aaa5ca"
+  # source = "github.com/cklewar/f5-xc-modules//f5xc/ce/gcp?ref=0aaa5ca" # main (previous commit)
+  source = "github.com/cklewar/f5-xc-modules//f5xc/ce/gcp?ref=b3fc49d" # 0.11.18
   # source = "github.com/tjm/f5-xc-modules//f5xc/ce/gcp?ref=7d2bb4d" # fix/no-public-ips
   # source                         = "../../F5/f5-xc-modules/f5xc/ce/gcp"
+  has_public_ip = false # 0.11.18
+  # use_public_ip                  = false
   f5xc_ce_gateway_multi_node     = false # this is broken when true
-  use_public_ip                  = false
   gcp_region                     = var.gcp_region
   gcp_service_account_email      = google_service_account.f5xc.email
   fabric_subnet_outside          = "" # empty string - do not create
