@@ -152,32 +152,6 @@ resource "google_compute_image" "f5xc_multi" {
   }
 }
 
-# Temporary Test VM
-resource "google_compute_instance" "multi_vm" {
-  project                   = var.gcp_project_id
-  zone                      = var.gcp_zone
-  name                      = "${var.name_prefix}-${var.env}-02"
-  machine_type              = var.gcp_compute_type
-  allow_stopping_for_update = true
-  boot_disk {
-    initialize_params {
-      image = var.gcp_compute_image
-    }
-  }
-
-  # First interface - DMZ (default route -> Internet)
-  network_interface {
-    network    = google_compute_network.dmz.self_link
-    subnetwork = google_compute_subnetwork.dmz.id
-  }
-
-  # Secondary Interface - MAIN (inside)
-  network_interface {
-    network    = google_compute_network.vpc.self_link
-    subnetwork = google_compute_subnetwork.main.id
-  }
-}
-
 module "f5_ce_multi" {
   # source = "github.com/cklewar/f5-xc-modules//f5xc/ce/gcp?ref=0aaa5ca" # main (previous commit)
   source = "github.com/cklewar/f5-xc-modules//f5xc/ce/gcp?ref=606c1b6" # main
