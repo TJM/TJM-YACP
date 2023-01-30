@@ -25,7 +25,7 @@ resource "random_id" "suffix" {
 #   labels              = local.labels
 # }
 
-## Enable OS Login for the project
+## Disable OS Login for the project - OSLogin breaks the ability to login to the F5XC-CE as "centos"
 ## https://cloud.google.com/compute/docs/instances/managing-instance-access
 resource "google_compute_project_metadata_item" "os_login" {
   project = var.gcp_project_id
@@ -33,6 +33,7 @@ resource "google_compute_project_metadata_item" "os_login" {
   value   = "FALSE"
 }
 
+## For debugging, enable the ability to connect to a serial port.
 resource "google_compute_project_metadata_item" "serial_port" {
   project = var.gcp_project_id
   key     = "serial-port-enable"
@@ -42,19 +43,16 @@ resource "google_compute_project_metadata_item" "serial_port" {
 ## Enable Google APIs
 resource "google_project_service" "apis" {
   for_each = toset([
-    "cloudkms.googleapis.com",
     "cloudresourcemanager.googleapis.com",
     "compute.googleapis.com",
     "container.googleapis.com",
+    "dns.googleapis.com",
     "iam.googleapis.com",
     "logging.googleapis.com",
     "monitoring.googleapis.com",
     "secretmanager.googleapis.com",
     "servicenetworking.googleapis.com",
-    "sqladmin.googleapis.com",
     "storage.googleapis.com",
-    "secretmanager.googleapis.com",
-    "dns.googleapis.com",
   ])
   # project                    = google_project.main.project_id
   project                    = var.gcp_project_id
