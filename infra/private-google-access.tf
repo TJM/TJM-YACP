@@ -42,7 +42,7 @@ resource "google_dns_managed_zone" "google_private_access" {
     }
   }
 
-  # depends_on = [google_project_service.apis]
+  depends_on = [google_project_service.apis["dns.googleapis.com"]]
 }
 
 # Create private googleapis.com A record
