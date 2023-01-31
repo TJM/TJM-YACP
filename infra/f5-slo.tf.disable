@@ -67,12 +67,6 @@ resource "google_compute_firewall" "f5_additional_ips" {
   }
 }
 
-resource "google_service_account" "f5xc" {
-  account_id   = "${google_compute_network.vpc.name}-f5xc"
-  project      = var.gcp_project_id
-  display_name = "F5XC CE Node SA"
-}
-
 resource "google_compute_image" "f5xc" {
   name    = var.machine_image
   project = var.gcp_project_id
@@ -82,12 +76,12 @@ resource "google_compute_image" "f5xc" {
   }
 }
 
-module "f5_ce" {
-  source = "github.com/cklewar/f5-xc-modules//f5xc/ce/gcp?ref=0aaa5ca"
+module "f5_ce_single" {
+  source = "github.com/cklewar/f5-xc-modules//f5xc/ce/gcp?ref=606c1b6" # main - 2023-01-30
   # source = "github.com/tjm/f5-xc-modules//f5xc/ce/gcp?ref=7d2bb4d" # fix/no-public-ips
   # source                         = "../../F5/f5-xc-modules/f5xc/ce/gcp"
   f5xc_ce_gateway_multi_node     = false # this is broken when true
-  use_public_ip                  = false
+  has_public_ip                  = false
   gcp_region                     = var.gcp_region
   gcp_service_account_email      = google_service_account.f5xc.email
   fabric_subnet_outside          = "" # empty string - do not create
@@ -116,4 +110,11 @@ module "f5_ce" {
     google   = google.project_bound
     volterra = volterra
   }
+
+  depends_on = [
+    google_compute_route.f5,
+    google_compute_firewall.f5_ip_ranges_ingress,
+    google_compute_firewall.f5_ip_ranges_egress,
+    google_compute_firewall.f5_additional_ips,
+  ]
 }
