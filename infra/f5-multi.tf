@@ -1,21 +1,5 @@
 # # volterra == F5XC
-# provider "volterra" {
-#   api_p12_file = var.f5xc_api_p12_file
-#   url          = var.f5xc_api_url
-# }
 
-# # F5XC module requires the project and zone to be set in the provider.
-# provider "google" {
-#   alias   = "project_bound"
-#   project = var.gcp_project_id
-#   zone    = var.gcp_zone
-# }
-
-
-## DUPLICATE
-# locals {
-#   cluster_labels = var.f5xc_fleet_label != "" ? { "ves.io/fleet" = var.f5xc_fleet_label } : {}
-# }
 
 ## DMZ VPC (Network)
 resource "google_compute_network" "dmz" {
