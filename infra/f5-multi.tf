@@ -138,7 +138,7 @@ resource "google_compute_image" "f5xc_multi" {
 
 module "f5_ce_multi" {
   # source = "github.com/cklewar/f5-xc-modules//f5xc/ce/gcp?ref=0aaa5ca" # main (previous commit)
-  source = "github.com/cklewar/f5-xc-modules//f5xc/ce/gcp?ref=606c1b6" # main
+  source = "github.com/cklewar/f5-xc-modules//f5xc/ce/gcp?ref=853b86c" # main
   # source = "github.com/tjm/f5-xc-modules//f5xc/ce/gcp?ref=7d2bb4d" # fix/no-public-ips
   # source                         = "../../F5/f5-xc-modules/f5xc/ce/gcp"
   has_public_ip = false # 0.11.18
