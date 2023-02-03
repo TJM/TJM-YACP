@@ -17,7 +17,7 @@ locals {
 }
 
 resource "google_service_account" "f5xc" {
-  account_id   = "${google_compute_network.dmz.name}-f5xc"
+  account_id   = "${var.name_prefix}-f5xc"
   project      = var.gcp_project_id
   display_name = "F5XC CE Node SA"
 }
