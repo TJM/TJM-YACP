@@ -133,14 +133,14 @@ resource "google_compute_firewall" "f5_ip_ranges_ingress_dmz" {
 }
 
 
-resource "google_compute_image" "f5xc_multi" {
-  name    = var.f5_machine_image_multi
-  project = var.gcp_project_id
-  family  = "f5xc-ce"
-  raw_disk {
-    source = "https://storage.googleapis.com/ves-images/${var.f5_machine_image_multi}.tar.gz"
-  }
-}
+# resource "google_compute_image" "f5xc_multi" {
+#   name    = var.f5_machine_image_multi
+#   project = var.gcp_project_id
+#   family  = "f5xc-ce"
+#   raw_disk {
+#     source = "https://storage.googleapis.com/ves-images/${var.f5_machine_image_multi}.tar.gz"
+#   }
+# }
 
 # module "f5_ce_multi" {
 #   # source = "github.com/cklewar/f5-xc-modules//f5xc/ce/gcp?ref=0aaa5ca" # main (previous commit)
