@@ -58,7 +58,7 @@ resource "google_compute_router_nat" "dmz" {
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 }
 
-# Allow IAP TCP forwarding
+# Allow IAP TCP forwarding - to allow SSH access
 # https://cloud.google.com/iap/docs/using-tcp-forwarding
 resource "google_compute_firewall" "iap_dmz" {
   project       = var.gcp_project_id
@@ -74,69 +74,36 @@ resource "google_compute_firewall" "iap_dmz" {
   }
 }
 
-# TEMPORARY: Allow SSH from inside network
-# resource "google_compute_firewall" "ssh" {
-#   project   = var.gcp_project_id
-#   name      = "${google_compute_network.dmz.name}-allow-ssh-inside-${random_id.suffix.hex}"
-#   network   = google_compute_network.vpc.self_link
-#   priority  = 65534
-#   direction = "INGRESS"
-#   # source_ranges = [google_compute_subnetwork.main.ip_cidr_range]
-#   source_ranges = ["0.0.0.0/0"]
-#   # target_tags   = ["iap"]
-#   allow {
-#     protocol = "tcp"
-#     ports    = [22]
-#   }
-#   allow {
-#     protocol = "icmp"
-#   }
-# }
-
-# TEMPORARY: Allow SSH OUT inside network
-resource "google_compute_firewall" "ssh_egress" {
-  project   = var.gcp_project_id
-  name      = "${google_compute_network.dmz.name}-allow-ssh-egress-${random_id.suffix.hex}"
-  network   = google_compute_network.vpc.self_link
-  priority  = 65534
-  direction = "EGRESS"
-  # source_ranges = [google_compute_subnetwork.main.ip_cidr_range]
-  # target_tags   = ["iap"]
-  allow {
-    protocol = "tcp"
-    ports    = [22]
-  }
-  allow {
-    protocol = "icmp"
-  }
-}
-
 
 ## INGRESS Firewall allow for f5_ip_ranges
-resource "google_compute_firewall" "f5_ip_ranges_ingress_dmz" {
-  name          = "${google_compute_network.dmz.name}-f5-ingress"
-  project       = var.gcp_project_id
-  network       = google_compute_network.dmz.name
-  direction     = "INGRESS"
-  priority      = 1000
-  source_ranges = var.f5_ip_ranges
-  target_tags   = ["f5xc"]
-  allow {
-    protocol = "tcp"
-    ports    = ["443"]
-  }
+## FUTURE USE: For when we have a public IP associated
+# resource "google_compute_firewall" "f5_ip_ranges_ingress_dmz" {
+#   name          = "${google_compute_network.dmz.name}-f5-ingress"
+#   project       = var.gcp_project_id
+#   network       = google_compute_network.dmz.name
+#   direction     = "INGRESS"
+#   priority      = 1000
+#   source_ranges = var.f5_ip_ranges
+#   target_tags   = ["f5xc"]
+#   allow {
+#     protocol = "tcp"
+#     ports    = ["443"]
+#   }
 
-  allow {
-    protocol = "udp"
-    ports    = ["4500"]
-  }
-}
+#   allow {
+#     protocol = "udp"
+#     ports    = ["4500"]
+#   }
+# }
 
 
 resource "google_compute_image" "f5xc_multi" {
   name    = var.f5_machine_image_multi
   project = var.gcp_project_id
   family  = "f5xc-ce"
+  guest_os_features {
+    type = "MULTI_IP_SUBNET"
+  }
   raw_disk {
     source = "https://storage.googleapis.com/ves-images/${var.f5_machine_image_multi}.tar.gz"
   }
